@@ -1,16 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using Elements.ElementsConfig;
 using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [SerializeField] private ElementsConfig config;
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
         
