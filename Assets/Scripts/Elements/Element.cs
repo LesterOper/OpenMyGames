@@ -3,37 +3,17 @@ using UnityEngine.EventSystems;
 
 namespace Elements
 {
-    public class Element : MonoBehaviour, IElement, IPointerDownHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler
+    public class Element : MonoBehaviour, IElement
     {
-        [SerializeField] private Animation _elementAnimationComponent;
+        [SerializeField] private Animator _elementAnimator;
+        [SerializeField] private SwipeElementController _swipeElementController;
         private ElementType _elementType;
-        private PositionPair _positionPair;
-
-        class PositionPair
-        {
-            private int _indexX;
-            private int _indexY;
-
-            public int IndexX => _indexX;
-
-            public int IndexY => _indexY;
-
-            public PositionPair(int indexX, int indexY)
-            {
-                _indexX = indexX;
-                _indexY = indexY;
-            }
-
-            public void ChangePosition(int indexX, int indexY)
-            {
-                _indexX = indexX;
-                _indexY = indexY;
-            }
-        }
+        private ElementPosition _positionOnField; 
+        
 
         public void Initialize()
         {
-            
+            _swipeElementController.Initialize(_positionOnField);
         }
 
         public void PlayIdleAnimation()
@@ -43,22 +23,23 @@ namespace Elements
         public void PlayDestroyAnimation()
         {
         }
+    }
 
-        public void OnPointerDown(PointerEventData eventData)
+    public class ElementPosition
+    {
+        private int row;
+        private int column;
+
+        public int Row
         {
-            
+            get => row;
+            set => row = value;
         }
 
-        public void OnPointerClick(PointerEventData eventData)
+        public int Column
         {
-        }
-
-        public void OnBeginDrag(PointerEventData eventData)
-        {
-        }
-
-        public void OnDrag(PointerEventData eventData)
-        {
+            get => column;
+            set => column = value;
         }
     }
 

@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2683121057667462178}
+  - component: {fileID: 5643345009329281622}
   m_Layer: 5
   m_Name: FireElement
   m_TagString: Untagged
@@ -37,6 +38,20 @@ RectTransform:
   m_AnchoredPosition: {x: 205, y: -991}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5643345009329281622
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3122335715730250761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cc4dc52d823457eaf347270529eba21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _elementAnimator: {fileID: 6152618488212330548}
+  _swipeElementController: {fileID: 1739250394712019050}
 --- !u!1 &6261259190309913934
 GameObject:
   m_ObjectHideFlags: 0
@@ -49,6 +64,7 @@ GameObject:
   - component: {fileID: 2985879532296085771}
   - component: {fileID: 3076174975390441220}
   - component: {fileID: 6152618488212330548}
+  - component: {fileID: 1739250394712019050}
   m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
@@ -135,3 +151,15 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1739250394712019050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6261259190309913934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a04746feef4b4bb29991ac8f0e01d16b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
