@@ -1,4 +1,6 @@
-﻿using Elements;
+﻿using System;
+using System.Collections.Generic;
+using Elements;
 using Elements.ElementsConfig;
 using UnityEngine;
 
@@ -6,12 +8,23 @@ namespace DefaultNamespace
 {
     public class LevelGenerator : MonoBehaviour
     {
+        [SerializeField] private List<SlotController> slots;
         private Level _level;
+
+        private void OnEnable()
+        {
+            
+        }
+
+        private void OnDisable()
+        {
+            
+        }
 
         public void Generate()
         {
             _level = new Level();
-            _level.GenerateLevel();
+            slots = _level.GenerateLevel(slots);
         }
 
         public void Normalize()
@@ -26,10 +39,26 @@ namespace DefaultNamespace
     {
         private ElementType[][] _elements;
 
-        public void GenerateLevel()
+        public List<SlotController> GenerateLevel(List<SlotController> slots)
         {
-            _elements = new ElementType[3][];
+            _elements = new ElementType[2][];
             _elements = LevelContainer.level;
+            ElementPosition elementPosition = new ElementPosition();
+            int slotsIndex = 0;
+            slots.Reverse();
+
+            for (int i = 0; i < _elements.Length; i++)
+            {
+                elementPosition.Row = i;
+                for (int j = 0; j < _elements[0].Length; j++)
+                {
+                    elementPosition.Column = j;
+                    slots[slotsIndex].Initialize(elementPosition, _elements[i][j]);
+                    slotsIndex++;
+                }
+            }
+
+            return slots;
         }
 
         public void NormalizeLevel()

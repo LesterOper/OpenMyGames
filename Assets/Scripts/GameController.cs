@@ -24,7 +24,7 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        
+        levelGenerator.Generate();
     }
 
     private void CheckSwitchBetweenElements(Dictionary<string, object> parameters)

@@ -3,17 +3,25 @@ using UnityEngine.EventSystems;
 
 namespace Elements
 {
-    public class Element : MonoBehaviour, IElement
+    public class Element : MonoBehaviour
     {
         [SerializeField] private Animator _elementAnimator;
+        [SerializeField] private RectTransform rect;
         [SerializeField] private SwipeElementController _swipeElementController;
         private ElementType _elementType;
         private ElementPosition _positionOnField; 
         
 
-        public void Initialize()
+        public void Initialize(ElementPosition elementPosition, ElementType elementType)
         {
+            _positionOnField = elementPosition;
+            _elementType = elementType;
             _swipeElementController.Initialize(_positionOnField);
+        }
+
+        public void MoveElement(Transform newParent)
+        {
+            transform.SetParent(newParent);
         }
 
         public void PlayIdleAnimation()

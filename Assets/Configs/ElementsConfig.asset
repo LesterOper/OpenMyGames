@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fe2d7218a9245ef9aefc8d740170b8f, type: 3}
   m_Name: ElementsConfig
   m_EditorClassIdentifier: 
-  elementDatas: []
+  elementDatas:
+  - elementType: 2
+    element: {fileID: 8683101504937056550, guid: f263008461f5c7b4185361c946abd8e4, type: 3}
+  - elementType: 1
+    element: {fileID: 5643345009329281622, guid: fbbca2c7eeb575d4caf747db56eefece, type: 3}

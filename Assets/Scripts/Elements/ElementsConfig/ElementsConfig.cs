@@ -10,7 +10,7 @@ namespace Elements.ElementsConfig
     {
         [SerializeField] private List<ElementData> elementDatas;
 
-        public IElement GetElementGraphicByElementType(ElementType elementType) =>
+        public Element GetElementGraphicByElementType(ElementType elementType) =>
             elementDatas.FirstOrDefault(elem => elem.ElementType == elementType)?.Element;
     }
 
