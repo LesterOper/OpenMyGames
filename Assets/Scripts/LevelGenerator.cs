@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using DefaultNamespace.Utils;
 using Elements;
 using Elements.ElementsConfig;
 using UnityEngine;
@@ -13,12 +14,12 @@ namespace DefaultNamespace
 
         private void OnEnable()
         {
-            
+            EventsInvoker.StartListening(EventsKeys.SWIPE, CheckSwitchBetweenElements);
         }
 
         private void OnDisable()
         {
-            
+            EventsInvoker.StopListening(EventsKeys.SWIPE, CheckSwitchBetweenElements);
         }
 
         public void Generate()
@@ -27,32 +28,59 @@ namespace DefaultNamespace
             slots = _level.GenerateLevel(slots);
         }
 
-        public void Normalize()
+        private void Normalize()
         {
             _level.NormalizeLevel();
         }
 
-        public bool CanSwitch(ElementPosition elementPosition, SwipeDirection swipeDirection) => _level.CanSwitchBetweenElements(elementPosition, swipeDirection);
+        private void CheckSwitchBetweenElements(Dictionary<string, object> parameters)
+        {
+            SwipeEventsArgs swipeEventsArgs = (SwipeEventsArgs) parameters[EventsKeys.SWIPE];
+            bool isCan = CanSwitch(swipeEventsArgs.ElementPosition, swipeEventsArgs.SwipeDirection);
+            if (isCan)
+            {
+                ElementPosition targetSlot = _level.TargetElement;
+                SlotController swiped = slots.Find(slot => slot.SlotElementPosition.Equals(swipeEventsArgs.ElementPosition));
+                SlotController target = slots.Find(slot => slot.SlotElementPosition.Equals(targetSlot));
+                SwitchElements(swiped, target); 
+            }
+        }
+
+        private void SwitchElements(SlotController swipedSlotElement, SlotController targetSlot)
+        {
+            ElementType swipedElementType = swipedSlotElement.ElementType;
+            ElementType targetElementType = targetSlot.ElementType;
+            swipedSlotElement.MoveElement(targetSlot.GetComponent<RectTransform>());
+            targetSlot.MoveElement(swipedSlotElement.GetComponent<RectTransform>());
+            swipedSlotElement.Initialize(targetElementType);
+            targetSlot.Initialize(swipedElementType);
+        }
+        
+        private bool CanSwitch(ElementPosition elementPosition, SwipeDirection swipeDirection) => _level.CanSwitchBetweenElements(elementPosition, swipeDirection);
     }
 
     public class Level
     {
         private ElementType[][] _elements;
+        private ElementPosition targetElement;
+
+        public ElementPosition TargetElement => targetElement;
 
         public List<SlotController> GenerateLevel(List<SlotController> slots)
         {
-            _elements = new ElementType[2][];
             _elements = LevelContainer.level;
-            ElementPosition elementPosition = new ElementPosition();
             int slotsIndex = 0;
             slots.Reverse();
 
             for (int i = 0; i < _elements.Length; i++)
             {
-                elementPosition.Row = i;
                 for (int j = 0; j < _elements[0].Length; j++)
                 {
-                    elementPosition.Column = j;
+                    var elementPosition = new ElementPosition
+                    {
+                        Row = i,
+                        Column = j
+                    };
                     slots[slotsIndex].Initialize(elementPosition, _elements[i][j]);
                     slotsIndex++;
                 }
@@ -75,26 +103,16 @@ namespace DefaultNamespace
             {
                 if (swipeDirection == SwipeDirection.UP)
                 {
-                    if (elementPosition.Row == 0 || _elements[elementPosition.Row + swipeIncremental][elementPosition.Column] == ElementType.NONE) return false;
-                    
-                    var elem = _elements[elementPosition.Row][elementPosition.Column];
-                    _elements[elementPosition.Row][elementPosition.Column] =
-                        _elements[elementPosition.Row + swipeIncremental][elementPosition.Column];
-                    _elements[elementPosition.Row + swipeIncremental][elementPosition.Column] = elem;
+                    if (elementPosition.Row == 0 || _elements[elementPosition.Row - swipeIncremental][elementPosition.Column] == ElementType.NONE) return false;
+                    ChangeElements(-1,0, elementPosition.Row, elementPosition.Column);
                     return true;
-                    
                 }
 
                 if (swipeDirection == SwipeDirection.RIGHT)
                 {
                     if (elementPosition.Column == _elements[0].Length-1) return false;
-                    
-                    var elem = _elements[elementPosition.Row][elementPosition.Column];
-                    _elements[elementPosition.Row][elementPosition.Column] =
-                        _elements[elementPosition.Row][elementPosition.Column + swipeIncremental];
-                    _elements[elementPosition.Row][elementPosition.Column + swipeIncremental] = elem;
+                    ChangeElements(0,1, elementPosition.Row, elementPosition.Column);
                     return true;
-                    
                 }
             }
             else
@@ -102,32 +120,32 @@ namespace DefaultNamespace
                 if (swipeDirection == SwipeDirection.DOWN)
                 {
                     if (elementPosition.Row == _elements.Length-1) return false;
-                    
-                    var elem = _elements[elementPosition.Row][elementPosition.Column];
-                    _elements[elementPosition.Row][elementPosition.Column] =
-                        _elements[elementPosition.Row - swipeIncremental][elementPosition.Column];
-                    _elements[elementPosition.Row - swipeIncremental][elementPosition.Column] = elem;
+                    ChangeElements(1,0, elementPosition.Row, elementPosition.Column);
                     return true;
-                    
                 }
 
                 if (swipeDirection == SwipeDirection.LEFT)
                 {
                     if (elementPosition.Column == 0) return false;
-                   
-                    var elem = _elements[elementPosition.Row][elementPosition.Column];
-                    _elements[elementPosition.Row][elementPosition.Column] =
-                        _elements[elementPosition.Row][elementPosition.Column - swipeIncremental];
-                    _elements[elementPosition.Row][elementPosition.Column - swipeIncremental] = elem;
+                    ChangeElements(0,-1, elementPosition.Row, elementPosition.Column);
                     return true;
-                    
                 }
             }
 
             return false;
         }
-        
 
-
+        private void ChangeElements(int indexIncrementalX, int indexIncrementalY, int posRow, int posColumn)
+        {
+            var elem = _elements[posRow][posColumn];
+            _elements[posRow][posColumn] =
+                _elements[posRow + indexIncrementalX][posColumn + indexIncrementalY];
+            _elements[posRow + indexIncrementalX][posColumn + indexIncrementalY] = elem;
+            targetElement = new ElementPosition()
+            {
+                Row = posRow+indexIncrementalX,
+                Column = posColumn + indexIncrementalY
+            };
+        }
     }
 }

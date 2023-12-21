@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using DG.Tweening;
+using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Elements
@@ -17,11 +19,15 @@ namespace Elements
             _positionOnField = elementPosition;
             _elementType = elementType;
             _swipeElementController.Initialize(_positionOnField);
+            
         }
 
-        public void MoveElement(Transform newParent)
+        public void MoveElement(Transform newParent, Action callback)
         {
             transform.SetParent(newParent);
+            rect.DOAnchorPos(new Vector2(0, 0), 0.4f)
+                .SetEase(Ease.InSine);
+            //.OnComplete(callback.Invoke);
         }
 
         public void PlayIdleAnimation()
@@ -48,6 +54,11 @@ namespace Elements
         {
             get => column;
             set => column = value;
+        }
+
+        public bool Equals(ElementPosition obj)
+        {
+            return row == obj.row && column == obj.column;
         }
     }
 
