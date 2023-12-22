@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using DefaultNamespace;
+using DefaultNamespace.Utils;
 using DG.Tweening;
+using EventsArgs;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -11,8 +15,17 @@ namespace Elements
         [SerializeField] private RectTransform rect;
         [SerializeField] private SwipeElementController _swipeElementController;
         private ElementType _elementType;
-        private ElementPosition _positionOnField; 
-        
+        private ElementPosition _positionOnField;
+
+        private void OnEnable()
+        {
+            //EventsInvoker.StartListening(EventsKeys.MOVE_ELEMENT, MoveElement);
+        }
+
+        private void OnDisable()
+        {
+            //EventsInvoker.StopListening(EventsKeys.MOVE_ELEMENT, MoveElement);
+        }
 
         public void Initialize(ElementPosition elementPosition, ElementType elementType)
         {
@@ -22,7 +35,7 @@ namespace Elements
             
         }
 
-        public void MoveElement(Transform newParent, Action callback)
+        public void MoveElement(Transform newParent, Action callback = null)
         {
             transform.SetParent(newParent);
             rect.DOAnchorPos(new Vector2(0, 0), 0.4f)
@@ -30,6 +43,8 @@ namespace Elements
             //.OnComplete(callback.Invoke);
         }
 
+        
+        
         public void PlayIdleAnimation()
         {
         }
@@ -43,6 +58,12 @@ namespace Elements
     {
         private int row;
         private int column;
+
+        public ElementPosition(int row, int column)
+        {
+            this.row = row;
+            this.column = column;
+        }
 
         public int Row
         {
