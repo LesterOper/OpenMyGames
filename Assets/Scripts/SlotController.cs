@@ -11,7 +11,7 @@ namespace DefaultNamespace
         private ElementPosition slotElementPosition;
         private ElementType _elementType;
 
-        private void Start()
+        private void Awake()
         {
             element = GetComponentInChildren<Element>();
         }
@@ -29,7 +29,8 @@ namespace DefaultNamespace
             _elementType = elementType;
             if (elementType != ElementType.NONE)
             {
-                if (transform.GetChild(0).TryGetComponent(out element))
+                element = transform.GetComponentInChildren<Element>();
+                if (element != null)
                 {
                     element.MoveElement(_rectTransform, null);
                     element.Initialize(slotElementPosition, _elementType);
@@ -43,6 +44,8 @@ namespace DefaultNamespace
             if(element != null) 
                 element.MoveElement(rectTransform, null);
         }
+
+        public void ClearElement() => element.PlayDestroyAnimation();
 
         public ElementPosition SlotElementPosition => slotElementPosition;
 

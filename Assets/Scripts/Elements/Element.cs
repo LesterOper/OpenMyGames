@@ -51,6 +51,8 @@ namespace Elements
 
         public void PlayDestroyAnimation()
         {
+            _elementAnimator.SetTrigger("Destroy");
+            Destroy(gameObject, 0.5f);
         }
     }
 

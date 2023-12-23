@@ -11,6 +11,7 @@ namespace DefaultNamespace
     public class LevelGenerator : MonoBehaviour
     {
         [SerializeField] private List<SlotController> slots;
+        private Action destroyElements;
         private Level _level;
 
         private void OnEnable()
@@ -33,6 +34,28 @@ namespace DefaultNamespace
         {
             var info = _level.NormalizeLevel();
             MoveElementsAfterNormalize(info);
+            Invoke(nameof(Match), 2);
+        }
+
+        private void Match()
+        {
+            var list = _level.Match();
+            ClearMatchedSlots(list);
+        }
+
+        private void ClearMatchedSlots(List<ElementPosition> matched)
+        {
+            if(matched.Count <=0) return;
+            foreach (var slot in matched)
+            {
+                SlotController slotMatched =
+                    slots.FirstOrDefault(slotLocal => slotLocal.SlotElementPosition.Equals(slot));
+                if(slotMatched != null)
+                    destroyElements += slotMatched.ClearElement;
+            }
+            destroyElements.Invoke();
+            destroyElements = null;
+            Invoke(nameof(Normalize), 2f);
         }
 
         private void MoveElementsAfterNormalize(List<InfoOfElementMoveAfterNormalize> infoOfElementMoveAfterNormalizes)
@@ -58,7 +81,8 @@ namespace DefaultNamespace
                 SlotController swiped = slots.FirstOrDefault(slot => slot.SlotElementPosition.Equals(swipeEventsArgs.ElementPosition));
                 SlotController target = slots.FirstOrDefault(slot => slot.SlotElementPosition.Equals(targetSlot));
                 SwitchElements(swiped, target); 
-                Normalize();
+                Invoke(nameof(Normalize), 2);
+                //Normalize();
             }
         }
 

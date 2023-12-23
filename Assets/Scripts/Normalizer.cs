@@ -14,19 +14,20 @@ namespace DefaultNamespace
             _infoOfElementMoveAfterNormalizes = new List<InfoOfElementMoveAfterNormalize>();
         }
         
-        public ElementType[][] Normalize(ElementType[][] elementTypes)
+        public ElementType[,] Normalize(ElementType[,] elementTypes)
         {
             _infoOfElementMoveAfterNormalizes.Clear();
-
-            for (int i = elementTypes.Length - 1; i >= 0; i--)
+            int rows = elementTypes.GetUpperBound(0) + 1;
+            int columns = elementTypes.GetUpperBound(1) + 1;
+            for (int i = rows - 1; i >= 0; i--)
             {
-                for (int j = 0; j < elementTypes[i].Length; j++)
+                for (int j = 0; j < columns; j++)
                 {
-                    if(elementTypes[i][j] == ElementType.NONE) continue;
-                    ElementType[] column = new ElementType[elementTypes.Length - i];
+                    if(elementTypes[i,j] == ElementType.NONE) continue;
+                    ElementType[] column = new ElementType[rows - i];
                     for (int k = i; k < column.Length; k++)
                     {
-                        column[k] = elementTypes[k][j];
+                        column[k] = elementTypes[k,j];
                     }
 
                     int increment = 0;
@@ -37,9 +38,9 @@ namespace DefaultNamespace
 
                     ElementPosition needToMove = new ElementPosition(i, j);
                     ElementPosition targetPosition = new ElementPosition(i+increment, j);
-                    var buf = elementTypes[i][j];
-                    elementTypes[i][j] = elementTypes[i + increment][j];
-                    elementTypes[i + increment][j] = buf;
+                    var buf = elementTypes[i,j];
+                    elementTypes[i,j] = elementTypes[i + increment,j];
+                    elementTypes[i + increment,j] = buf;
                     _infoOfElementMoveAfterNormalizes.Add(new InfoOfElementMoveAfterNormalize(needToMove, targetPosition));
                 }
             }
