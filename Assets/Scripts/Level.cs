@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DefaultNamespace.Utils;
 using Elements;
 using Elements.ElementsConfig;
 using UnityEngine;
@@ -7,40 +8,11 @@ namespace DefaultNamespace
 {
     public class Level
     {
-        private ElementType[,] _elements;
         private ElementPosition targetElementPosition;
-        private Normalizer _normalizer;
         private MatchesFinder _matchesFinder;
+        private ElementType[,] _elements;
+        private Normalizer _normalizer;
         public ElementPosition TargetElementPosition => targetElementPosition;
-
-        public List<ElementPosition> Match()
-        {
-            _matchesFinder.Match(_elements);
-            ClearLevelMatrixAccordingMatchedElements(_matchesFinder.ElementPositionsToDestroy);
-            string str = "";
-            foreach (var VARIABLE in _matchesFinder.ElementPositionsToDestroy)
-            {
-                str +="[" + VARIABLE.Row + "," + VARIABLE.Column + "]   ";
-            }
-            Debug.Log("Match - " + str);
-            return _matchesFinder.ElementPositionsToDestroy;
-        }
-
-        private void ClearLevelMatrixAccordingMatchedElements(List<ElementPosition> matched)
-        {
-            foreach (var elem in matched)
-            {
-                _elements[elem.Row, elem.Column] = ElementType.NONE;
-            }
-            Print("After match");
-        }
-
-        private void InitializeProps(ElementType[,] level)
-        {
-            _matchesFinder = new MatchesFinder();
-            _normalizer = new Normalizer();
-            _elements = level;
-        }
 
         public List<SlotController> GenerateLevel(ElementType[,] level, Transform parent, SlotController slotControllerPrefab, ElementsConfig elementsConfig)
         {
@@ -64,30 +36,33 @@ namespace DefaultNamespace
             
             return slotControllers;
         }
+        
+        public List<ElementPosition> Match()
+        {
+            _matchesFinder.Match(_elements);
+            ClearLevelMatrixAccordingMatchedElements(_matchesFinder.ElementPositionsToDestroy);
+            return _matchesFinder.ElementPositionsToDestroy;
+        }
 
+        private void ClearLevelMatrixAccordingMatchedElements(List<ElementPosition> matched)
+        {
+            foreach (var elem in matched)
+            {
+                _elements[elem.Row, elem.Column] = ElementType.NONE;
+            }
+        }
+
+        private void InitializeProps(ElementType[,] level)
+        {
+            _matchesFinder = new MatchesFinder();
+            _normalizer = new Normalizer();
+            _elements = level;
+        }
+        
         public List<InfoOfElementMoveAfterNormalize> NormalizeLevel()
         {
             _elements = _normalizer.Normalize(_elements);
-            Print("Normalize");
             return _normalizer.InfoOfElementMoveAfterNormalizes;
-        }
-
-        private void Print(string title)
-        {
-            Debug.Log(title + "\n");
-            string print = "";
-            int rows = _elements.GetUpperBound(0) + 1;
-            int columns = _elements.GetUpperBound(1) + 1;
-            for (int i = 0; i < rows; i++)
-            {
-                for (int j = 0; j < columns; j++)
-                {
-                    print += _elements[i,j] + "    ";
-                }
-
-                Debug.Log(print + "\n");
-                print = "";
-            }
         }
 
         public bool CanSwitchBetweenElements(ElementPosition elementPosition, SwipeDirection swipeDirection)
@@ -127,7 +102,6 @@ namespace DefaultNamespace
                     return true;
                 }
             }
-
             return false;
         }
 
@@ -138,7 +112,6 @@ namespace DefaultNamespace
                 _elements[posRow + indexIncrementalX,posColumn + indexIncrementalY];
             _elements[posRow + indexIncrementalX,posColumn + indexIncrementalY] = elem;
             targetElementPosition = new ElementPosition(posRow+indexIncrementalX, posColumn + indexIncrementalY);
-            Print("Swipe");
         }
 
         public void CheckLevelProgress()
@@ -154,9 +127,13 @@ namespace DefaultNamespace
                     if (_elements[i, j] == ElementType.NONE) noneElementsCount++;
                 }
             }
-            
-            if(noneElementsCount >= rows*columns)
-                Debug.Log("LEVEL PASSED");
+
+            if (noneElementsCount >= rows * columns)
+            {
+                EventsInvoker.TriggerEvent(EventsKeys.LOAD_NEXT_LEVEL, null);
+                return;
+            }
+            EventsInvoker.TriggerEvent(EventsKeys.SWIPE_BLOCK, new Dictionary<string, object>(){{EventsKeys.SWIPE_BLOCK, true}});
         }
     }
 }

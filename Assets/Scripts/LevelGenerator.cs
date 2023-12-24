@@ -37,7 +37,6 @@ namespace DefaultNamespace
             var info = _level.NormalizeLevel();
             MoveElementsAfterNormalize(info);
             Invoke(nameof(Match), 2);
-            _level.CheckLevelProgress();
         }
 
         private void Match()
@@ -48,7 +47,11 @@ namespace DefaultNamespace
 
         private void ClearMatchedSlots(List<ElementPosition> matched)
         {
-            if(matched.Count <=0) return;
+            if (matched.Count <= 0)
+            {
+                _level.CheckLevelProgress();
+                return;
+            }
             foreach (var slot in matched)
             {
                 SlotController slotMatched =
@@ -80,6 +83,7 @@ namespace DefaultNamespace
             bool isCan = CanSwitch(swipeEventsArgs.ElementPosition, swipeEventsArgs.SwipeDirection);
             if (isCan)
             {
+                EventsInvoker.TriggerEvent(EventsKeys.SWIPE_BLOCK, new Dictionary<string, object>(){{EventsKeys.SWIPE_BLOCK, false}});
                 ElementPosition targetSlot = _level.TargetElementPosition;
                 SlotController swiped = _generatedSlots.FirstOrDefault(slot => slot.SlotElementPosition.Equals(swipeEventsArgs.ElementPosition));
                 SlotController target = _generatedSlots.FirstOrDefault(slot => slot.SlotElementPosition.Equals(targetSlot));

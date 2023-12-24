@@ -26,10 +26,14 @@ public class GameController : MonoBehaviour
     private void Start()
     {
         _currentLevel = PlayerPrefs.GetInt(DataKeys.CURRENT_LEVEL);
-        if (_currentLevel == 0) _currentLevel = 1;
+        if (_currentLevel == 0)
+        {
+            _currentLevel = 1;
+            PlayerPrefs.SetInt(DataKeys.CURRENT_LEVEL, _currentLevel);
+        }
+        
         ParseXmlWithLevelsData();
         CreateLevel();
-        _loadLevelViewController.LoadLevelViewDeactivate(0.5f);
     }
 
     private void ParseXmlWithLevelsData()
@@ -40,14 +44,21 @@ public class GameController : MonoBehaviour
     
     private void CreateLevel()
     {
-        ElementType[,] level = _levelsParser.GetLevel();
+        ElementType[,] level = _levelsParser.GetLevel(_currentLevel);
         if(_levelGenerator != null) Destroy(_levelGenerator.gameObject);
         _levelGenerator = Instantiate(levelGeneratorPrefab, levelParent);
         _levelGenerator.Generate(level);
+        _loadLevelViewController.LoadLevelViewDeactivate(0.5f);
     }
 
     private void NextLevel(Dictionary<string, object> arg)
     {
+        if (_currentLevel == _levelsParser.Levels.LevelDatas.Length)
+        {
+            _currentLevel = 1;
+        }
+        else _currentLevel++;
+        PlayerPrefs.SetInt(DataKeys.CURRENT_LEVEL, _currentLevel);
         _loadLevelViewController.LoadLevelViewActivate(0.5f, CreateLevel);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml.Serialization;
 using Elements;
 using UnityEngine;
@@ -11,6 +12,7 @@ namespace DefaultNamespace
     {
         private Levels _levels;
         private TextAsset _levelTextAsset;
+        public Levels Levels => _levels;
 
         public void ParseXml()
         {
@@ -22,8 +24,8 @@ namespace DefaultNamespace
         
         private int[,] ParseLevelToIntMatrix(int levelNumber)
         {
-            Levels levels = _levels;
-            RowData[] matrixRows = levels.LevelDatas[levelNumber].LevelMatrix.RowDatas;
+            LevelData currentLevelData = _levels.GetCurrentLevel(levelNumber);
+            RowData[] matrixRows = currentLevelData.LevelMatrix.RowDatas;
             int rowCount = matrixRows.Length;
             int columnCount = matrixRows[0].Row.Split(" ").Length;
             int[,] intMatrix = new int[rowCount, columnCount];
@@ -40,7 +42,7 @@ namespace DefaultNamespace
             return intMatrix;
         }
 
-        public ElementType[,] GetLevel(int levelNumber = 0)
+        public ElementType[,] GetLevel(int levelNumber = 1)
         {
             int[,] levelIntMatrix = ParseLevelToIntMatrix(levelNumber);
             int rows = levelIntMatrix.GetUpperBound(0) + 1;
@@ -65,6 +67,9 @@ namespace DefaultNamespace
     {
         [XmlElement("LevelData")]
         public LevelData[] LevelDatas { get; set; }
+
+        public LevelData GetCurrentLevel(int levelId) => 
+            LevelDatas.FirstOrDefault(levelLocal => levelLocal.Id == levelId);
     }
 
     [Serializable]

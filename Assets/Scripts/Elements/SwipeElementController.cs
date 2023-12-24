@@ -11,7 +11,22 @@ namespace Elements
     {
         private bool _canSwipe = true;
         private ElementPosition _elementPosition;
-        
+
+        private void OnEnable()
+        {
+            EventsInvoker.StartListening(EventsKeys.SWIPE_BLOCK, BlockSwipe);
+        }
+
+        private void OnDisable()
+        {
+            EventsInvoker.StopListening(EventsKeys.SWIPE_BLOCK, BlockSwipe);
+        }
+
+        private void BlockSwipe(Dictionary<string, object> arg)
+        {
+            _canSwipe = (bool) arg[EventsKeys.SWIPE_BLOCK];
+        }
+
         public void Initialize(ElementPosition elementPosition)
         {
             _elementPosition = elementPosition;
