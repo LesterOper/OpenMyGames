@@ -19,29 +19,26 @@ namespace DefaultNamespace
             _infoOfElementMoveAfterNormalizes.Clear();
             int rows = elementTypes.GetUpperBound(0) + 1;
             int columns = elementTypes.GetUpperBound(1) + 1;
-            for (int i = rows - 1; i >= 0; i--)
+            for (int i = rows-1; i >= 0; i--)
             {
                 for (int j = 0; j < columns; j++)
                 {
                     if(elementTypes[i,j] == ElementType.NONE) continue;
-                    ElementType[] column = new ElementType[rows - i];
-                    for (int k = i; k < column.Length; k++)
-                    {
-                        column[k] = elementTypes[k,j];
-                    }
 
                     int increment = 0;
-                    for (int t = 1; t < column.Length; t++)
+                    for (int t = i; t < rows; t++)
                     {
-                        if (column[t] == ElementType.NONE) increment++;
+                        if (elementTypes[t,j] == ElementType.NONE) increment++;
                     }
-
+                    
                     ElementPosition needToMove = new ElementPosition(i, j);
-                    ElementPosition targetPosition = new ElementPosition(i+increment, j);
-                    var buf = elementTypes[i,j];
-                    elementTypes[i,j] = elementTypes[i + increment,j];
-                    elementTypes[i + increment,j] = buf;
-                    _infoOfElementMoveAfterNormalizes.Add(new InfoOfElementMoveAfterNormalize(needToMove, targetPosition));
+                    ElementPosition targetPosition = new ElementPosition(i + increment, j);
+                    var buf = elementTypes[i, j];
+                    elementTypes[i, j] = elementTypes[i + increment, j];
+                    elementTypes[i + increment, j] = buf;
+                    _infoOfElementMoveAfterNormalizes.Add(
+                        new InfoOfElementMoveAfterNormalize(needToMove, targetPosition));
+                    
                 }
             }
             return elementTypes;

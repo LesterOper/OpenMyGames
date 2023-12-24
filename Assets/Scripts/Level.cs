@@ -34,6 +34,7 @@ namespace DefaultNamespace
             {
                 _elements[elem.Row, elem.Column] = ElementType.NONE;
             }
+            Print("After match");
         }
         
         public List<SlotController> GenerateLevel(List<SlotController> slots)
@@ -45,9 +46,8 @@ namespace DefaultNamespace
             int slotsIndex = 0;
             int rows = _elements.GetUpperBound(0) + 1;
             int columns = _elements.GetUpperBound(1) + 1;
-            slots.Reverse();
 
-            for (int i = 0; i < rows; i++)
+            for (int i = rows - 1; i >=0; i--)
             {
                 for (int j = 0; j < columns; j++)
                 {
@@ -101,7 +101,7 @@ namespace DefaultNamespace
 
                 if (swipeDirection == SwipeDirection.RIGHT)
                 {
-                    if (elementPosition.Column == _elements.GetUpperBound(1)-1) return false;
+                    if (elementPosition.Column == _elements.GetUpperBound(1)) return false;
                     ChangeElements(0,1, elementPosition.Row, elementPosition.Column);
                     return true;
                 }
@@ -110,7 +110,7 @@ namespace DefaultNamespace
             {
                 if (swipeDirection == SwipeDirection.DOWN)
                 {
-                    if (elementPosition.Row == _elements.GetUpperBound(0)-1) return false;
+                    if (elementPosition.Row == _elements.GetUpperBound(0)) return false;
                     ChangeElements(1,0, elementPosition.Row, elementPosition.Column);
                     return true;
                 }
