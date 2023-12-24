@@ -27,8 +27,6 @@ namespace DefaultNamespace.Utils
                     else
                     {
                         eventInvoker.Init();
-
-                        //  Sets this to not be destroyed when reloading scene
                         DontDestroyOnLoad(eventInvoker);
                     }
                 }

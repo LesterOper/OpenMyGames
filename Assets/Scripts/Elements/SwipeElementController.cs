@@ -7,88 +7,53 @@ using UnityEngine.EventSystems;
 
 namespace Elements
 {
-    public class SwipeElementController : MonoBehaviour, IPointerDownHandler, IPointerClickHandler, IBeginDragHandler, IDragHandler
+    public class SwipeElementController : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IDragHandler
     {
-        private bool _canSwipe = true;
         private ElementPosition _elementPosition;
+        private bool _canSwipe = true;
 
-        private void OnEnable()
-        {
-            EventsInvoker.StartListening(EventsKeys.SWIPE_BLOCK, BlockSwipe);
-        }
+        private void OnEnable() => EventsInvoker.StartListening(EventsKeys.SWIPE_BLOCK, BlockSwipe);
 
-        private void OnDisable()
-        {
-            EventsInvoker.StopListening(EventsKeys.SWIPE_BLOCK, BlockSwipe);
-        }
+        private void OnDisable() => EventsInvoker.StopListening(EventsKeys.SWIPE_BLOCK, BlockSwipe);
 
-        private void BlockSwipe(Dictionary<string, object> arg)
-        {
-            _canSwipe = (bool) arg[EventsKeys.SWIPE_BLOCK];
-        }
+        public void Initialize(ElementPosition elementPosition) => _elementPosition = elementPosition;
 
-        public void Initialize(ElementPosition elementPosition)
-        {
-            _elementPosition = elementPosition;
-        }
-        
-        public void OnPointerDown(PointerEventData eventData)
-        {
-            
-        }
-
-        public void OnPointerClick(PointerEventData eventData)
-        {
-        }
+        public void OnPointerDown(PointerEventData eventData) { }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
             if(!_canSwipe) return;
-            SwipeEventsArgs swipeEventsArgs;
+            SwipeDirection swipeDirection;
             Vector2 delta = eventData.delta;
 
             if (Math.Abs(delta.x) > Math.Abs(delta.y))
             {
-                if (delta.x > 0)
-                {
-                    swipeEventsArgs = new SwipeEventsArgs()
-                        {SwipeDirection = SwipeDirection.RIGHT, ElementPosition = _elementPosition};
-                    EventsInvoker.TriggerEvent(EventsKeys.SWIPE, new Dictionary<string, object>(){{EventsKeys.SWIPE, swipeEventsArgs}});
-                }
-                else
-                {
-                    swipeEventsArgs = new SwipeEventsArgs()
-                        {SwipeDirection = SwipeDirection.LEFT, ElementPosition = _elementPosition};
-                    EventsInvoker.TriggerEvent(EventsKeys.SWIPE, new Dictionary<string, object>(){{EventsKeys.SWIPE, swipeEventsArgs}});
-                }
+                swipeDirection = delta.x > 0 ? SwipeDirection.RIGHT : SwipeDirection.LEFT;
             }
             else
             {
-                if (delta.y > 0)
-                {
-                    swipeEventsArgs = new SwipeEventsArgs()
-                        {SwipeDirection = SwipeDirection.UP, ElementPosition = _elementPosition};
-                    EventsInvoker.TriggerEvent(EventsKeys.SWIPE, new Dictionary<string, object>(){{EventsKeys.SWIPE, swipeEventsArgs}});
-                }
-                else
-                {
-                    swipeEventsArgs = new SwipeEventsArgs()
-                        {SwipeDirection = SwipeDirection.DOWN, ElementPosition = _elementPosition};
-                    EventsInvoker.TriggerEvent(EventsKeys.SWIPE, new Dictionary<string, object>(){{EventsKeys.SWIPE, swipeEventsArgs}});
-                }
+                swipeDirection = delta.y > 0 ? SwipeDirection.UP : SwipeDirection.DOWN;
             }
+
+            var swipeEventsArgs = new SwipeEventsArgs(_elementPosition, swipeDirection);
+            EventsInvoker.TriggerEvent(EventsKeys.SWIPE, new Dictionary<string, object>(){{EventsKeys.SWIPE, swipeEventsArgs}});
         }
 
-        public void OnDrag(PointerEventData eventData)
-        {
-            
-        }
+        public void OnDrag(PointerEventData eventData) { }
+        
+        private void BlockSwipe(Dictionary<string, object> arg) => _canSwipe = (bool) arg[EventsKeys.SWIPE_BLOCK];
     }
 
     public class SwipeEventsArgs
     {
         public ElementPosition ElementPosition;
         public SwipeDirection SwipeDirection;
+
+        public SwipeEventsArgs(ElementPosition elementPosition, SwipeDirection swipeDirection)
+        {
+            ElementPosition = elementPosition;
+            SwipeDirection = swipeDirection;
+        }
     }
     
     public enum SwipeDirection

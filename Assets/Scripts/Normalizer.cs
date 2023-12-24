@@ -7,9 +7,7 @@ namespace DefaultNamespace
     {
         private List<InfoOfElementMoveAfterNormalize> _infoOfElementMoveAfterNormalizes;
         private ElementType[,] _elementTypes;
-
         public List<InfoOfElementMoveAfterNormalize> InfoOfElementMoveAfterNormalizes => _infoOfElementMoveAfterNormalizes;
-
         public Normalizer()
         {
             _infoOfElementMoveAfterNormalizes = new List<InfoOfElementMoveAfterNormalize>();

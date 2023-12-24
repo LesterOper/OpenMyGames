@@ -13,15 +13,9 @@ public class GameController : MonoBehaviour
     private LevelsParser _levelsParser;
     private int _currentLevel;
 
-    private void OnEnable()
-    {
-        EventsInvoker.StartListening(EventsKeys.LOAD_NEXT_LEVEL, NextLevel);
-    }
+    private void OnEnable() => EventsInvoker.StartListening(EventsKeys.LOAD_NEXT_LEVEL, NextLevel);
 
-    private void OnDisable()
-    {
-        EventsInvoker.StopListening(EventsKeys.LOAD_NEXT_LEVEL, NextLevel);
-    }
+    private void OnDisable() => EventsInvoker.StopListening(EventsKeys.LOAD_NEXT_LEVEL, NextLevel);
 
     private void Start()
     {

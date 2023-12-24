@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using DefaultNamespace;
-using DefaultNamespace.Utils;
-using DG.Tweening;
-using EventsArgs;
+﻿using DG.Tweening;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace Elements
 {
@@ -14,39 +8,14 @@ namespace Elements
         [SerializeField] private Animator _elementAnimator;
         [SerializeField] private RectTransform rect;
         [SerializeField] private SwipeElementController _swipeElementController;
-        private ElementType _elementType;
-        private ElementPosition _positionOnField;
 
-        private void OnEnable()
-        {
-            //EventsInvoker.StartListening(EventsKeys.MOVE_ELEMENT, MoveElement);
-        }
+        public void Initialize(ElementPosition elementPosition) => _swipeElementController.Initialize(elementPosition);
 
-        private void OnDisable()
-        {
-            //EventsInvoker.StopListening(EventsKeys.MOVE_ELEMENT, MoveElement);
-        }
-
-        public void Initialize(ElementPosition elementPosition, ElementType elementType)
-        {
-            _positionOnField = elementPosition;
-            _elementType = elementType;
-            _swipeElementController.Initialize(_positionOnField);
-            
-        }
-
-        public void MoveElement(Transform newParent, Action callback = null)
+        public void MoveElement(Transform newParent)
         {
             transform.SetParent(newParent);
             rect.DOAnchorPos(new Vector2(0, 0), 0.4f)
                 .SetEase(Ease.InSine);
-            //.OnComplete(callback.Invoke);
-        }
-
-        
-        
-        public void PlayIdleAnimation()
-        {
         }
 
         public void PlayDestroyAnimation()

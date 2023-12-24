@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Elements;
-using Unity.VisualScripting;
 
 namespace DefaultNamespace
 {
@@ -80,16 +79,9 @@ namespace DefaultNamespace
             if (current == ElementType.NONE)
             {
                 current = toMatch[x,y];
-                //toMatch[x,y] = ElementType.NONE;
                 _elementPositionsToMatch.Add(new ElementPosition(x, y));
             }
-            /*else if (toMatch[x,y] != current) return;
-            else
-            {
-                _elementPositionsToMatch.Add(new ElementPosition(x, y));
-                toMatch[x,y] = ElementType.NONE;
-            }*/
-
+            
             if (checkRowOrColumn)
             {
                 if (y > 0)
@@ -104,16 +96,6 @@ namespace DefaultNamespace
                 if (x < toMatch.GetUpperBound(0))
                     MatchSlot(x + 1, y);
             }
-            
-            /*if (x > 0)
-                MatchAdjacentElement(x - 1, y, checkRowOrColumn);
-            if (x < toMatch.GetUpperBound(0))
-                MatchAdjacentElement(x + 1, y, checkRowOrColumn);
-            if (y > 0)
-                MatchAdjacentElement(x, y - 1, checkRowOrColumn);
-            if (y < toMatch.GetUpperBound(1))
-                MatchAdjacentElement(x, y + 1, checkRowOrColumn);*/
-            
         }
 
         private void MatchSlot(int x, int y)
@@ -121,9 +103,7 @@ namespace DefaultNamespace
             if (toMatch[x, y] == current)
             {
                 _elementPositionsToMatch.Add(new ElementPosition(x, y));
-                //toMatch[x, y] = ElementType.NONE;
             }
-
         }
     }
 

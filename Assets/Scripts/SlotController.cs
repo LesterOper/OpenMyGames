@@ -1,5 +1,4 @@
-﻿using System;
-using Elements;
+﻿using Elements;
 using Elements.ElementsConfig;
 using UnityEngine;
 
@@ -8,23 +7,10 @@ namespace DefaultNamespace
     public class SlotController : MonoBehaviour
     {
         [SerializeField] private RectTransform _rectTransform;
-        private Element element;
         private ElementPosition slotElementPosition;
         private ElementType _elementType;
+        private Element element;
 
-        private void Awake()
-        {
-            //element = GetComponentInChildren<Element>();
-        }
-
-        public void Initialize(ElementPosition elementPosition, ElementType elementType)
-        {
-            _elementType = elementType;
-            slotElementPosition = elementPosition;
-            if(_elementType != ElementType.NONE)
-                element.Initialize(elementPosition, elementType);
-        }
-        
         public void Initialize(ElementPosition elementPosition, ElementData elementData)
         {
             _elementType = elementData.ElementType;
@@ -32,7 +18,7 @@ namespace DefaultNamespace
             if (_elementType != ElementType.NONE)
             {
                 element = Instantiate(elementData.Element, transform);
-                element.Initialize(elementPosition, _elementType);
+                element.Initialize(elementPosition);
             }
         }
 
@@ -44,8 +30,8 @@ namespace DefaultNamespace
                 element = transform.GetComponentInChildren<Element>();
                 if (element != null)
                 {
-                    element.MoveElement(_rectTransform, null);
-                    element.Initialize(slotElementPosition, _elementType);
+                    element.MoveElement(_rectTransform);
+                    element.Initialize(slotElementPosition);
                 }
             }
             else element = null;
@@ -54,13 +40,13 @@ namespace DefaultNamespace
         public void MoveElement(RectTransform rectTransform)
         {
             if(element != null) 
-                element.MoveElement(rectTransform, null);
+                element.MoveElement(rectTransform);
         }
-
         public void ClearElement() => element.PlayDestroyAnimation();
-
         public ElementPosition SlotElementPosition => slotElementPosition;
-
         public ElementType ElementType => _elementType;
+
+
+
     }
 }

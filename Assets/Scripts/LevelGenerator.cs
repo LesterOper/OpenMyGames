@@ -16,15 +16,9 @@ namespace DefaultNamespace
         private Action _destroyElements;
         private Level _level;
 
-        private void OnEnable()
-        {
-            EventsInvoker.StartListening(EventsKeys.SWIPE, CheckSwitchBetweenElements);
-        }
+        private void OnEnable() => EventsInvoker.StartListening(EventsKeys.SWIPE, CheckSwitchBetweenElements);
 
-        private void OnDisable()
-        {
-            EventsInvoker.StopListening(EventsKeys.SWIPE, CheckSwitchBetweenElements);
-        }
+        private void OnDisable() => EventsInvoker.StopListening(EventsKeys.SWIPE, CheckSwitchBetweenElements);
 
         public void Generate(ElementType[,] level)
         {
@@ -36,7 +30,7 @@ namespace DefaultNamespace
         {
             var info = _level.NormalizeLevel();
             MoveElementsAfterNormalize(info);
-            Invoke(nameof(Match), 2);
+            Invoke(nameof(Match), 1);
         }
 
         private void Match()
@@ -61,7 +55,7 @@ namespace DefaultNamespace
             }
             _destroyElements.Invoke();
             _destroyElements = null;
-            Invoke(nameof(Normalize), 2f);
+            Invoke(nameof(Normalize), 1.5f);
         }
 
         private void MoveElementsAfterNormalize(List<InfoOfElementMoveAfterNormalize> infoOfElementMoveAfterNormalizes)
@@ -88,7 +82,7 @@ namespace DefaultNamespace
                 SlotController swiped = _generatedSlots.FirstOrDefault(slot => slot.SlotElementPosition.Equals(swipeEventsArgs.ElementPosition));
                 SlotController target = _generatedSlots.FirstOrDefault(slot => slot.SlotElementPosition.Equals(targetSlot));
                 SwitchElements(swiped, target); 
-                Invoke(nameof(Normalize), 2);
+                Invoke(nameof(Normalize), 1);
             }
         }
 

@@ -14,6 +14,13 @@ namespace DefaultNamespace
         private Normalizer _normalizer;
         public ElementPosition TargetElementPosition => targetElementPosition;
 
+        private void InitializeProps(ElementType[,] level)
+        {
+            _matchesFinder = new MatchesFinder();
+            _normalizer = new Normalizer();
+            _elements = level;
+        }
+        
         public List<SlotController> GenerateLevel(ElementType[,] level, Transform parent, SlotController slotControllerPrefab, ElementsConfig elementsConfig)
         {
             InitializeProps(level);
@@ -37,6 +44,71 @@ namespace DefaultNamespace
             return slotControllers;
         }
         
+        public bool CanSwitchBetweenElements(ElementPosition elementPosition, SwipeDirection swipeDirection)
+        {
+            int swipeIncremental =
+                swipeDirection == SwipeDirection.DOWN || swipeDirection == SwipeDirection.LEFT ? -1 : 1;
+            
+            if (swipeIncremental > 0)
+            {
+                if (swipeDirection == SwipeDirection.UP)
+                {
+                    if (elementPosition.Row == 0 ) 
+                        return false;
+                    if (_elements[elementPosition.Row - swipeIncremental, elementPosition.Column] == ElementType.NONE)
+                        return false;
+                    
+                    ChangeElements(-1,0, elementPosition.Row, elementPosition.Column);
+                    return true;
+                }
+
+                if (swipeDirection == SwipeDirection.RIGHT)
+                {
+                    if (elementPosition.Column == _elements.GetUpperBound(1)) 
+                        return false;
+
+                    ChangeElements(0,1, elementPosition.Row, elementPosition.Column);
+                    return true;
+                }
+            }
+            else
+            {
+                if (swipeDirection == SwipeDirection.DOWN)
+                {
+                    if (elementPosition.Row == _elements.GetUpperBound(0)) 
+                        return false;
+
+                    ChangeElements(1,0, elementPosition.Row, elementPosition.Column);
+                    return true;
+                }
+                
+                if (swipeDirection == SwipeDirection.LEFT)
+                {
+                    if (elementPosition.Column == 0) 
+                        return false;
+
+                    ChangeElements(0,-1, elementPosition.Row, elementPosition.Column);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public List<InfoOfElementMoveAfterNormalize> NormalizeLevel()
+        {
+            _elements = _normalizer.Normalize(_elements);
+            return _normalizer.InfoOfElementMoveAfterNormalizes;
+        }
+        
+        private void ChangeElements(int indexIncrementalX, int indexIncrementalY, int posRow, int posColumn)
+        {
+            var elem = _elements[posRow,posColumn];
+            _elements[posRow,posColumn] =
+                _elements[posRow + indexIncrementalX,posColumn + indexIncrementalY];
+            _elements[posRow + indexIncrementalX,posColumn + indexIncrementalY] = elem;
+            targetElementPosition = new ElementPosition(posRow+indexIncrementalX, posColumn + indexIncrementalY);
+        }
+        
         public List<ElementPosition> Match()
         {
             _matchesFinder.Match(_elements);
@@ -51,69 +123,7 @@ namespace DefaultNamespace
                 _elements[elem.Row, elem.Column] = ElementType.NONE;
             }
         }
-
-        private void InitializeProps(ElementType[,] level)
-        {
-            _matchesFinder = new MatchesFinder();
-            _normalizer = new Normalizer();
-            _elements = level;
-        }
         
-        public List<InfoOfElementMoveAfterNormalize> NormalizeLevel()
-        {
-            _elements = _normalizer.Normalize(_elements);
-            return _normalizer.InfoOfElementMoveAfterNormalizes;
-        }
-
-        public bool CanSwitchBetweenElements(ElementPosition elementPosition, SwipeDirection swipeDirection)
-        {
-            int swipeIncremental =
-                swipeDirection == SwipeDirection.DOWN || swipeDirection == SwipeDirection.LEFT ? -1 : 1;
-
-            if (swipeIncremental > 0)
-            {
-                if (swipeDirection == SwipeDirection.UP)
-                {
-                    if (elementPosition.Row == 0 || _elements[elementPosition.Row - swipeIncremental,elementPosition.Column] == ElementType.NONE) return false;
-                    ChangeElements(-1,0, elementPosition.Row, elementPosition.Column);
-                    return true;
-                }
-
-                if (swipeDirection == SwipeDirection.RIGHT)
-                {
-                    if (elementPosition.Column == _elements.GetUpperBound(1)) return false;
-                    ChangeElements(0,1, elementPosition.Row, elementPosition.Column);
-                    return true;
-                }
-            }
-            else
-            {
-                if (swipeDirection == SwipeDirection.DOWN)
-                {
-                    if (elementPosition.Row == _elements.GetUpperBound(0)) return false;
-                    ChangeElements(1,0, elementPosition.Row, elementPosition.Column);
-                    return true;
-                }
-
-                if (swipeDirection == SwipeDirection.LEFT)
-                {
-                    if (elementPosition.Column == 0) return false;
-                    ChangeElements(0,-1, elementPosition.Row, elementPosition.Column);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private void ChangeElements(int indexIncrementalX, int indexIncrementalY, int posRow, int posColumn)
-        {
-            var elem = _elements[posRow,posColumn];
-            _elements[posRow,posColumn] =
-                _elements[posRow + indexIncrementalX,posColumn + indexIncrementalY];
-            _elements[posRow + indexIncrementalX,posColumn + indexIncrementalY] = elem;
-            targetElementPosition = new ElementPosition(posRow+indexIncrementalX, posColumn + indexIncrementalY);
-        }
-
         public void CheckLevelProgress()
         {
             int rows = _elements.GetUpperBound(0) + 1;

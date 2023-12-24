@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using DG.Tweening;
-using UnityEngine;
+﻿using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Balloons
@@ -12,7 +9,7 @@ namespace Balloons
         private BalloonSpawner _balloonSpawner;
         private RectTransform _balloonParent;
         private Vector2 _target;
-        private bool _move = false;
+        private bool _move;
         private float speed;
         private float amplitude;
         private float sinusSpeed;

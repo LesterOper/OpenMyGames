@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -8,7 +7,6 @@ namespace Balloons
     public class BalloonSpawner : MonoBehaviour
     {
         [SerializeField] private BalloonController balloonPrefab;
-        private Canvas _canvas;
         private Rect rect;
         private readonly int maxBalloonCount = 3;
         private int ballonCount = 0;
@@ -18,15 +16,12 @@ namespace Balloons
             get => ballonCount;
             set => ballonCount = value;
         }
-
-        
         private void Start()
         {
             RectTransform rectTransform = GetComponent<RectTransform>();
             rect = rectTransform.rect;
             StartCoroutine(SpawnBalloons());
         }
-
         private IEnumerator SpawnBalloons()
         {
             while (true)
@@ -42,7 +37,6 @@ namespace Balloons
                 yield return new WaitForSeconds(3);
             }
         }
-
         private void GenerateStartPosition(BalloonController balloonController)
         {
             int rand = Random.Range(0, 2);
