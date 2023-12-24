@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Levels>
+    <LevelData id = "1" needSteps = "1">
+        <levelMatrix>
+            <rowData row ="2 0 1 0 0"/>
+            <rowData row ="2 0 2 1 1"/>
+        </levelMatrix>
+    </LevelData>
+    <LevelData id = "2" needSteps = "1">
+        <levelMatrix>
+            <rowData row ="0 2 2 0 0"/>
+            <rowData row ="0 2 1 2 2"/>
+            <rowData row ="0 1 2 1 1"/>
+            <rowData row ="0 2 1 2 2"/>
+            <rowData row ="0 2 1 2 2"/>
+        </levelMatrix>
+    </LevelData>
+    <LevelData id = "3" needSteps = "2">
+        <levelMatrix>
+            <rowData row ="0 0 2 0 0"/>
+            <rowData row ="0 2 1 0 0"/>
+            <rowData row ="0 2 2 0 2"/>
+            <rowData row ="0 1 2 1 1"/>
+            <rowData row ="0 2 1 2 2"/>
+            <rowData row ="0 2 1 2 2"/>
+        </levelMatrix>
+    </LevelData>
+</Levels>

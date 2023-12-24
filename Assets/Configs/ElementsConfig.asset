@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: ElementsConfig
   m_EditorClassIdentifier: 
   elementDatas:
+  - elementType: 0
+    element: {fileID: 0}
   - elementType: 2
     element: {fileID: 8683101504937056550, guid: f263008461f5c7b4185361c946abd8e4, type: 3}
   - elementType: 1

@@ -1,5 +1,6 @@
 ﻿using System;
 using Elements;
+using Elements.ElementsConfig;
 using UnityEngine;
 
 namespace DefaultNamespace
@@ -13,7 +14,7 @@ namespace DefaultNamespace
 
         private void Awake()
         {
-            element = GetComponentInChildren<Element>();
+            //element = GetComponentInChildren<Element>();
         }
 
         public void Initialize(ElementPosition elementPosition, ElementType elementType)
@@ -22,6 +23,17 @@ namespace DefaultNamespace
             slotElementPosition = elementPosition;
             if(_elementType != ElementType.NONE)
                 element.Initialize(elementPosition, elementType);
+        }
+        
+        public void Initialize(ElementPosition elementPosition, ElementData elementData)
+        {
+            _elementType = elementData.ElementType;
+            slotElementPosition = elementPosition;
+            if (_elementType != ElementType.NONE)
+            {
+                element = Instantiate(elementData.Element, transform);
+                element.Initialize(elementPosition, _elementType);
+            }
         }
 
         public void Initialize(ElementType elementType)

@@ -10,8 +10,10 @@ namespace DefaultNamespace
 {
     public class LevelGenerator : MonoBehaviour
     {
-        [SerializeField] private List<SlotController> slots;
-        private Action destroyElements;
+        [SerializeField] private ElementsConfig _elementsConfig;
+        [SerializeField] private SlotController slotPrefab;
+        private List<SlotController> _generatedSlots;
+        private Action _destroyElements;
         private Level _level;
 
         private void OnEnable()
@@ -24,10 +26,10 @@ namespace DefaultNamespace
             EventsInvoker.StopListening(EventsKeys.SWIPE, CheckSwitchBetweenElements);
         }
 
-        public void Generate()
+        public void Generate(ElementType[,] level)
         {
             _level = new Level();
-            slots = _level.GenerateLevel(slots);
+            _generatedSlots = _level.GenerateLevel(level, transform, slotPrefab, _elementsConfig);
         }
 
         private void Normalize()
@@ -35,6 +37,7 @@ namespace DefaultNamespace
             var info = _level.NormalizeLevel();
             MoveElementsAfterNormalize(info);
             Invoke(nameof(Match), 2);
+            _level.CheckLevelProgress();
         }
 
         private void Match()
@@ -49,12 +52,12 @@ namespace DefaultNamespace
             foreach (var slot in matched)
             {
                 SlotController slotMatched =
-                    slots.FirstOrDefault(slotLocal => slotLocal.SlotElementPosition.Equals(slot));
+                    _generatedSlots.FirstOrDefault(slotLocal => slotLocal.SlotElementPosition.Equals(slot));
                 if(slotMatched != null)
-                    destroyElements += slotMatched.ClearElement;
+                    _destroyElements += slotMatched.ClearElement;
             }
-            destroyElements.Invoke();
-            destroyElements = null;
+            _destroyElements.Invoke();
+            _destroyElements = null;
             Invoke(nameof(Normalize), 2f);
         }
 
@@ -64,9 +67,9 @@ namespace DefaultNamespace
             foreach (var info in infoOfElementMoveAfterNormalizes)
             {
                 SlotController needToMove =
-                    slots.FirstOrDefault(slot => slot.SlotElementPosition.Equals(info.NeedToMove));
+                    _generatedSlots.FirstOrDefault(slot => slot.SlotElementPosition.Equals(info.NeedToMove));
                 SlotController target =
-                    slots.FirstOrDefault(slot => slot.SlotElementPosition.Equals(info.TargetPosition));
+                    _generatedSlots.FirstOrDefault(slot => slot.SlotElementPosition.Equals(info.TargetPosition));
                 SwitchElements(needToMove, target);
             }
         }
@@ -77,12 +80,11 @@ namespace DefaultNamespace
             bool isCan = CanSwitch(swipeEventsArgs.ElementPosition, swipeEventsArgs.SwipeDirection);
             if (isCan)
             {
-                ElementPosition targetSlot = _level.TargetElement;
-                SlotController swiped = slots.FirstOrDefault(slot => slot.SlotElementPosition.Equals(swipeEventsArgs.ElementPosition));
-                SlotController target = slots.FirstOrDefault(slot => slot.SlotElementPosition.Equals(targetSlot));
+                ElementPosition targetSlot = _level.TargetElementPosition;
+                SlotController swiped = _generatedSlots.FirstOrDefault(slot => slot.SlotElementPosition.Equals(swipeEventsArgs.ElementPosition));
+                SlotController target = _generatedSlots.FirstOrDefault(slot => slot.SlotElementPosition.Equals(targetSlot));
                 SwitchElements(swiped, target); 
                 Invoke(nameof(Normalize), 2);
-                //Normalize();
             }
         }
 
@@ -96,6 +98,7 @@ namespace DefaultNamespace
             targetSlot.Initialize(swipedElementType);
         }
         
-        private bool CanSwitch(ElementPosition elementPosition, SwipeDirection swipeDirection) => _level.CanSwitchBetweenElements(elementPosition, swipeDirection);
+        private bool CanSwitch(ElementPosition elementPosition, SwipeDirection swipeDirection) => 
+            _level.CanSwitchBetweenElements(elementPosition, swipeDirection);
     }
 }

@@ -6,6 +6,7 @@ namespace DefaultNamespace
     public class Normalizer
     {
         private List<InfoOfElementMoveAfterNormalize> _infoOfElementMoveAfterNormalizes;
+        private ElementType[,] _elementTypes;
 
         public List<InfoOfElementMoveAfterNormalize> InfoOfElementMoveAfterNormalizes => _infoOfElementMoveAfterNormalizes;
 
@@ -17,34 +18,42 @@ namespace DefaultNamespace
         public ElementType[,] Normalize(ElementType[,] elementTypes)
         {
             _infoOfElementMoveAfterNormalizes.Clear();
-            int rows = elementTypes.GetUpperBound(0) + 1;
-            int columns = elementTypes.GetUpperBound(1) + 1;
+            _elementTypes = elementTypes;
+            int rows = _elementTypes.GetUpperBound(0) + 1;
+            int columns = _elementTypes.GetUpperBound(1) + 1;
             for (int i = rows-1; i >= 0; i--)
             {
                 for (int j = 0; j < columns; j++)
                 {
-                    if(elementTypes[i,j] == ElementType.NONE) continue;
-
-                    int increment = 0;
-                    for (int t = i; t < rows; t++)
-                    {
-                        if (elementTypes[t,j] == ElementType.NONE) increment++;
-                    }
-                    
-                    ElementPosition needToMove = new ElementPosition(i, j);
-                    ElementPosition targetPosition = new ElementPosition(i + increment, j);
-                    var buf = elementTypes[i, j];
-                    elementTypes[i, j] = elementTypes[i + increment, j];
-                    elementTypes[i + increment, j] = buf;
-                    _infoOfElementMoveAfterNormalizes.Add(
-                        new InfoOfElementMoveAfterNormalize(needToMove, targetPosition));
-                    
+                    if(_elementTypes[i,j] == ElementType.NONE) continue;
+                    var increment = CountIncrementToMoveDownElement(rows, i, j);
+                    MoveDownElementInLevelMatrix(i, j, increment);
                 }
             }
-            return elementTypes;
+            return _elementTypes;
+        }
+        private int CountIncrementToMoveDownElement(int rows, int currentRow, int currentColumn)
+        {
+            int increment = 0;
+            for (int i = currentRow; i < rows; i++)
+            {
+                if (_elementTypes[i,currentColumn] == ElementType.NONE) increment++;
+            }
+            
+            return increment;
+        }
+
+        private void MoveDownElementInLevelMatrix(int currentRow, int currentColumn, int increment)
+        {
+            ElementPosition needToMove = new ElementPosition(currentRow, currentColumn);
+            ElementPosition targetPosition = new ElementPosition(currentRow + increment, currentColumn);
+            var buf = _elementTypes[currentRow, currentColumn];
+            _elementTypes[currentRow, currentColumn] = _elementTypes[currentRow + increment, currentColumn];
+            _elementTypes[currentRow + increment, currentColumn] = buf;
+            _infoOfElementMoveAfterNormalizes.Add(
+                new InfoOfElementMoveAfterNormalize(needToMove, targetPosition));
         }
     }
-
     public class InfoOfElementMoveAfterNormalize
     {
         private ElementPosition needToMove;

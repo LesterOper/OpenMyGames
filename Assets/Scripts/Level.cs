@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Elements;
+using Elements.ElementsConfig;
 using UnityEngine;
 
 namespace DefaultNamespace
@@ -7,13 +8,10 @@ namespace DefaultNamespace
     public class Level
     {
         private ElementType[,] _elements;
-        private ElementPosition targetElement;
+        private ElementPosition targetElementPosition;
         private Normalizer _normalizer;
         private MatchesFinder _matchesFinder;
-
-        public Normalizer Normalizer => _normalizer;
-
-        public ElementPosition TargetElement => targetElement;
+        public ElementPosition TargetElementPosition => targetElementPosition;
 
         public List<ElementPosition> Match()
         {
@@ -36,28 +34,35 @@ namespace DefaultNamespace
             }
             Print("After match");
         }
-        
-        public List<SlotController> GenerateLevel(List<SlotController> slots)
+
+        private void InitializeProps(ElementType[,] level)
         {
             _matchesFinder = new MatchesFinder();
             _normalizer = new Normalizer();
-            _elements = LevelContainer.level;
-            Print("Start");
-            int slotsIndex = 0;
+            _elements = level;
+        }
+
+        public List<SlotController> GenerateLevel(ElementType[,] level, Transform parent, SlotController slotControllerPrefab, ElementsConfig elementsConfig)
+        {
+            InitializeProps(level);
+            List<SlotController> slotControllers = new List<SlotController>();
+            
             int rows = _elements.GetUpperBound(0) + 1;
             int columns = _elements.GetUpperBound(1) + 1;
 
-            for (int i = rows - 1; i >=0; i--)
+            for (int i = rows-1; i >=0; i--)
             {
                 for (int j = 0; j < columns; j++)
                 {
-                    var elementPosition = new ElementPosition(i, j);
-                    slots[slotsIndex].Initialize(elementPosition, _elements[i,j]);
-                    slotsIndex++;
+                    var positionInLevelMatrix = new ElementPosition(i, j);
+                    SlotController instantiatedSlot = Object.Instantiate(slotControllerPrefab, parent);
+                    ElementData currentElement = elementsConfig.GetElementGraphicByElementType(_elements[i, j]);
+                    instantiatedSlot.Initialize(positionInLevelMatrix, currentElement);
+                    slotControllers.Add(instantiatedSlot);
                 }
             }
-
-            return slots;
+            
+            return slotControllers;
         }
 
         public List<InfoOfElementMoveAfterNormalize> NormalizeLevel()
@@ -132,8 +137,26 @@ namespace DefaultNamespace
             _elements[posRow,posColumn] =
                 _elements[posRow + indexIncrementalX,posColumn + indexIncrementalY];
             _elements[posRow + indexIncrementalX,posColumn + indexIncrementalY] = elem;
-            targetElement = new ElementPosition(posRow+indexIncrementalX, posColumn + indexIncrementalY);
+            targetElementPosition = new ElementPosition(posRow+indexIncrementalX, posColumn + indexIncrementalY);
             Print("Swipe");
+        }
+
+        public void CheckLevelProgress()
+        {
+            int rows = _elements.GetUpperBound(0) + 1;
+            int columns = _elements.GetUpperBound(1) + 1;
+
+            int noneElementsCount = 0;
+            for (int i = 0; i < rows; i++)
+            {
+                for (int j = 0; j < columns; j++)
+                {
+                    if (_elements[i, j] == ElementType.NONE) noneElementsCount++;
+                }
+            }
+            
+            if(noneElementsCount >= rows*columns)
+                Debug.Log("LEVEL PASSED");
         }
     }
 }
