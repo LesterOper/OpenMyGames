@@ -52,6 +52,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _elementAnimator: {fileID: 2196597701108270778}
   rect: {fileID: 3885377867430866847}
+  _elementDestroyer: {fileID: 4363343020655884907}
   _swipeElementController: {fileID: 5469382887838721739}
 --- !u!1 &6469555426343831110
 GameObject:
@@ -66,6 +67,7 @@ GameObject:
   - component: {fileID: 1126285700777762555}
   - component: {fileID: 2196597701108270778}
   - component: {fileID: 5469382887838721739}
+  - component: {fileID: 4363343020655884907}
   m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
@@ -162,5 +164,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a04746feef4b4bb29991ac8f0e01d16b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4363343020655884907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6469555426343831110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b6a1a2a842440d19c63ad2d1299ebae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

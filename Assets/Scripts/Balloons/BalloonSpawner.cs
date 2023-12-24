@@ -42,11 +42,11 @@ namespace Balloons
             int rand = Random.Range(0, 2);
 
             float x = rand == 0 ? -rect.width / 2 - 100f : rect.width/2 +100f;
-            float y = Random.Range(-rect.height / 2, rect.height / 2);
+            float y = Random.Range((-rect.height + 150) / 2, rect.height / 2);
             Vector2 startPos = new Vector2(x, y);
 
             x = rand == 0 ? rect.width / 2 + 100f : -rect.width / 2 - 100f;
-            y = Random.Range(-rect.height / 2, rect.height / 2);
+            y = Random.Range((-rect.height+150) / 2, rect.height / 2);
             Vector2 target = new Vector2(x, y);
             
             balloonController.Setup(startPos, target, this);

@@ -55,7 +55,7 @@ namespace DefaultNamespace
             }
             _destroyElements.Invoke();
             _destroyElements = null;
-            Invoke(nameof(Normalize), 1.5f);
+            Invoke(nameof(Normalize), 2f);
         }
 
         private void MoveElementsAfterNormalize(List<InfoOfElementMoveAfterNormalize> infoOfElementMoveAfterNormalizes)

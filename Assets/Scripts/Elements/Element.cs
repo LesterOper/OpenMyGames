@@ -7,21 +7,29 @@ namespace Elements
     {
         [SerializeField] private Animator _elementAnimator;
         [SerializeField] private RectTransform rect;
+        [SerializeField] private ElementDestroyer _elementDestroyer;
         [SerializeField] private SwipeElementController _swipeElementController;
 
-        public void Initialize(ElementPosition elementPosition) => _swipeElementController.Initialize(elementPosition);
+        public void Initialize(ElementPosition elementPosition)
+        {
+            _swipeElementController.Initialize(elementPosition);
+            _elementDestroyer.SetupParent(gameObject);
+        }
 
         public void MoveElement(Transform newParent)
         {
             transform.SetParent(newParent);
-            rect.DOAnchorPos(new Vector2(0, 0), 0.4f)
-                .SetEase(Ease.InSine);
+            if (rect != null)
+            {
+                rect.DOAnchorPos(new Vector2(0, 0), 0.4f)
+                    .SetEase(Ease.InSine);
+            }
         }
 
         public void PlayDestroyAnimation()
         {
+            DOTween.Pause(this);
             _elementAnimator.SetTrigger("Destroy");
-            Destroy(gameObject, 1.5f);
         }
     }
 

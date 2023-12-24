@@ -10,6 +10,9 @@ namespace DefaultNamespace
         private ElementPosition slotElementPosition;
         private ElementType _elementType;
         private Element element;
+        
+        public ElementPosition SlotElementPosition => slotElementPosition;
+        public ElementType ElementType => _elementType;
 
         public void Initialize(ElementPosition elementPosition, ElementData elementData)
         {
@@ -43,10 +46,5 @@ namespace DefaultNamespace
                 element.MoveElement(rectTransform);
         }
         public void ClearElement() => element.PlayDestroyAnimation();
-        public ElementPosition SlotElementPosition => slotElementPosition;
-        public ElementType ElementType => _elementType;
-
-
-
     }
 }
